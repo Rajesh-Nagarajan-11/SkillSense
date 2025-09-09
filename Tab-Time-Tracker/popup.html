@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tab Time Tracker</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card-bg: #0f152b;
+      --surface: #0d1330;
+      --text: #e6e9f2;
+      --muted: #a9b0c6;
+      --brand: #5ad1ff;
+      --brand-strong: #37b9ff;
+      --shadow: 0 6px 24px rgba(7, 16, 40, 0.45);
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    html, body { border-radius: var(--radius); overflow: hidden; }
+    body {
+      margin: 0;
+      padding: 16px;
+      background: radial-gradient(1200px 600px at -5% -10%, #142047 0%, #0b1020 55%, #090d1b 100%);
+      color: var(--text);
+      font: 13px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    #container {
+      width: 340px;
+      margin: 0 auto;
+      padding: 16px 16px 14px 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)) , var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+    }
+    h1 {
+      margin: 2px 0 2px;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      color: var(--text);
+      text-align: left;
+    }
+    .controls { display:flex; gap:8px; margin: 6px 0 10px; align-items:center; }
+    .btn { border:1px solid rgba(255,255,255,0.14); background:rgba(255,255,255,0.06); color:var(--text); padding:6px 10px; border-radius:8px; font-size:12px; cursor:pointer; }
+    .status { font-size:12px; color: var(--muted); margin-left:auto; }
+    .subtitle {
+      margin: 0 0 12px 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0 0;
+      max-height: 420px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+    }
+    ul::-webkit-scrollbar { height: 8px; width: 8px; }
+    ul::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.14); border-radius: 8px; }
+    ul::-webkit-scrollbar-track { background: transparent; }
+    li.card-item {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.0)) , var(--surface);
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+      margin-bottom: 12px;
+      padding: 12px 12px 10px 12px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      display: flex;
+      align-items: center;
+    }
+    li.card-item:hover {
+      transform: translateY(-1px);
+      border-color: rgba(90, 209, 255, 0.35);
+      box-shadow: 0 8px 22px rgba(20, 35, 80, 0.35);
+    }
+    .card-content {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .url-title {
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 600;
+      word-break: break-all;
+      letter-spacing: 0.1px;
+    }
+    .url-subtext {
+      font-size: 11px;
+      color: var(--muted);
+      word-break: break-all;
+      opacity: 0.9;
+    }
+    .time-tracked {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .clock-icon {
+      font-size: 14px;
+      margin-right: 2px;
+      color: var(--brand-strong);
+    }
+    .minutes {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+      color: var(--brand);
+      background: rgba(90, 209, 255, 0.1);
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid rgba(90, 209, 255, 0.25);
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1 id="title">SkillSense</h1>
+    <div class="controls">
+      <button id="startBtn" class="btn">Start</button>
+      <button id="stopBtn" class="btn">Stop</button>
+      <span id="status" class="status"></span>
+    </div>
+    <div class="subtitle">Sense your browsing</div>
+    <ul id="urlList"></ul>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
