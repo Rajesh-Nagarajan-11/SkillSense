@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
+import { setAuthUser } from '../utils/auth';
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -19,20 +23,46 @@ const Signup: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setError(null);
+    setSuccess(null);
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      setError('Passwords do not match');
       return;
     }
 
-    console.log('Signup:', formData);
-    navigate('/dashboard');
+    try {
+      setLoading(true);
+      const res = await fetch('http://localhost:8080/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          username: formData.username,
+          password: formData.password,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.success === false) {
+        throw new Error(data?.message || 'Signup failed');
+      }
+      setSuccess(data.message || 'Signup successful');
+      if (data.username && data.email) {
+        setAuthUser({ username: data.username, email: data.email });
+      }
+      navigate('/dashboard');
+    } catch (err: any) {
+      setError(err.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-black px-4">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 relative">
@@ -50,26 +80,36 @@ const Signup: React.FC = () => {
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          {error && (
+            <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-md p-2">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="text-sm text-green-400 bg-green-500/10 border border-green-500/30 rounded-md p-2">
+              {success}
+            </div>
+          )}
           <div className="space-y-4">
             <div>
-              <label htmlFor="name" className="sr-only">
-                Full name
+              <label htmlFor="username" className="sr-only">
+                Username
               </label>
               <input
-                id="name"
-                name="name"
+                id="username"
+                name="username"
                 type="text"
-                autoComplete="name"
+                autoComplete="username"
                 required
-                value={formData.name}
+                value={formData.username}
                 onChange={handleChange}
                 className="appearance-none relative block w-full px-3 py-3 bg-gray-800/50 border border-gray-700/50 placeholder-gray-500 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="Full name"
+                placeholder="Username"
               />
             </div>
             <div>
               <label htmlFor="email" className="sr-only">
-                Email address
+                Email
               </label>
               <input
                 id="email"
@@ -80,7 +120,7 @@ const Signup: React.FC = () => {
                 value={formData.email}
                 onChange={handleChange}
                 className="appearance-none relative block w-full px-3 py-3 bg-gray-800/50 border border-gray-700/50 placeholder-gray-500 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="Email address"
+                placeholder="Email"
               />
             </div>
             <div>
@@ -120,9 +160,10 @@ const Signup: React.FC = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 font-medium"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 font-medium disabled:opacity-60"
             >
-              Create account
+              {loading ? 'Creating...' : 'Create account'}
             </button>
           </div>
         </form>

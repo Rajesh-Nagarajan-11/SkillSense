@@ -20,14 +20,16 @@ public class AuthController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> signup(@RequestBody Map<String, String> body) {
+		String email = body.get("email");
 		String username = body.get("username");
 		String password = body.get("password");
 		AuthResponse response = new AuthResponse();
 		try {
-			AppUser user = authService.signup(username, password);
+			AppUser user = authService.signup(email, username, password);
 			response.setSuccess(true);
 			response.setMessage("User created");
 			response.setUsername(user.getUsername());
+			response.setEmail(user.getEmail());
 			return ResponseEntity.ok(response);
 		} catch (IllegalArgumentException ex) {
 			response.setSuccess(false);
@@ -38,13 +40,20 @@ public class AuthController {
 
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
-		String username = body.get("username");
+		String email = body.get("email");
 		String password = body.get("password");
-		boolean ok = authService.login(username, password);
+		boolean ok = authService.login(email, password);
 		AuthResponse response = new AuthResponse();
 		response.setSuccess(ok);
 		response.setMessage(ok ? "Login successful" : "Invalid credentials");
-		response.setUsername(username);
+		response.setEmail(email);
+		if (ok) {
+			// Get username from database for successful login
+			AppUser user = authService.getUserByEmail(email);
+			if (user != null) {
+				response.setUsername(user.getUsername());
+			}
+		}
 		return ResponseEntity.ok(response);
 	}
 
@@ -53,6 +62,7 @@ public class AuthController {
 		private boolean success;
 		private String message;
 		private String username;
+		private String email;
 
 		public boolean isSuccess() { return success; }
 		public void setSuccess(boolean success) { this.success = success; }
@@ -60,6 +70,8 @@ public class AuthController {
 		public void setMessage(String message) { this.message = message; }
 		public String getUsername() { return username; }
 		public void setUsername(String username) { this.username = username; }
+		public String getEmail() { return email; }
+		public void setEmail(String email) { this.email = email; }
 	}
 }
 

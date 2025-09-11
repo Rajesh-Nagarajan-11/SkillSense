@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Brain, Clock, Target, Award, Settings, User, Calendar, Sun, Moon } from 'lucide-react';
+import { Brain, Clock, Target, Calculator, User, Calendar, Sun, Moon } from 'lucide-react';
+import { clearAuth, getAuthUser } from './utils/auth';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -92,18 +93,18 @@ function App() {
       color: 'blue'
     },
     {
+      title: 'Avg Hours/Day',
+      value: '2.1',
+      change: '+0.3',
+      icon: Calculator,
+      color: 'orange'
+    },
+    {
       title: 'Skills Tracked',
       value: '23',
       change: '+3',
       icon: Target,
       color: 'purple'
-    },
-    {
-      title: 'Achievements',
-      value: '15',
-      change: '+2',
-      icon: Award,
-      color: 'orange'
     }
   ];
 
@@ -240,11 +241,12 @@ function App() {
                 </span>
               </span>
             </button>
-            <button className={`p-2 ${theme === 'light' ? 'text-gray-600 hover:text-gray-900' : 'text-gray-400 hover:text-white'} transition-colors`}>
-              <Settings className="h-5 w-5" />
-            </button>
-            <button className={`p-2 ${theme === 'light' ? 'text-gray-600 hover:text-gray-900' : 'text-gray-400 hover:text-white'} transition-colors`}>
-              <User className="h-5 w-5" />
+            <div className={`flex items-center ${theme === 'light' ? 'text-gray-700' : 'text-gray-300'}`}>
+              <User className="h-5 w-5 mr-2" />
+              <span className="text-sm">{getAuthUser()?.username || 'User'}</span>
+            </div>
+            <button onClick={() => { clearAuth(); window.location.href = '/login'; }} className="px-3 py-1 rounded-md bg-red-600 text-white text-sm hover:bg-red-700">
+              Logout
             </button>
           </div>
         </div>

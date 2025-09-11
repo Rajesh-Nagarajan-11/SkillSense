@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import { Clock, Target, TrendingUp, Award } from 'lucide-react';
+import { Clock, Target, TrendingUp, Calculator } from 'lucide-react';
 import MetricCard, { MetricCardProps } from './MetricCard';
 
 const Dashboard = () => {
@@ -30,6 +30,14 @@ const Dashboard = () => {
       color: 'blue'
     },
     {
+      title: 'Avg Hours/Day',
+      value: '2.1',
+      change: '+0.3',
+      changeType: 'positive',
+      icon: Calculator,
+      color: 'orange'
+    },
+    {
       title: 'Skills Tracked',
       value: '23',
       change: '+3',
@@ -44,14 +52,6 @@ const Dashboard = () => {
       changeType: 'positive',
       icon: TrendingUp,
       color: 'green'
-    },
-    {
-      title: 'Achievements',
-      value: '15',
-      change: '+2',
-      changeType: 'positive',
-      icon: Award,
-      color: 'orange'
     }
   ];
 
